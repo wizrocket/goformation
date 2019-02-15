@@ -23,7 +23,7 @@ type AWSECSService struct {
 	// DesiredCount AWS CloudFormation Property
 	// Required: false
 	// See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-service.html#cfn-ecs-service-desiredcount
-	DesiredCount int `json:"DesiredCount,omitempty"`
+	DesiredCount int `json:"DesiredCount"`
 
 	// HealthCheckGracePeriodSeconds AWS CloudFormation Property
 	// Required: false
