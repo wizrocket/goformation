@@ -12,7 +12,7 @@ type AWSECSService_DeploymentConfiguration struct {
 	// MinimumHealthyPercent AWS CloudFormation Property
 	// Required: false
 	// See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-service-deploymentconfiguration.html#cfn-ecs-service-deploymentconfiguration-minimumhealthypercent
-	MinimumHealthyPercent int `json:"MinimumHealthyPercent,omitempty"`
+	MinimumHealthyPercent int `json:"MinimumHealthyPercent"`
 
 	// _deletionPolicy represents a CloudFormation DeletionPolicy
 	_deletionPolicy DeletionPolicy
