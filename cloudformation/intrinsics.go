@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/awslabs/goformation/intrinsics"
+	"github.com/wizrocket/goformation/intrinsics"
 )
 
 func strWrap(fn func(interface{}) string) intrinsics.IntrinsicHandler {

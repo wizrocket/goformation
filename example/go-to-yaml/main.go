@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/awslabs/goformation/cloudformation"
+	"github.com/wizrocket/goformation/cloudformation"
 )
 
 func main() {

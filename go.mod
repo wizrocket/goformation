@@ -1,9 +1,11 @@
-module github.com/awslabs/goformation
+module github.com/wizrocket/goformation
 
 require (
+	github.com/awslabs/goformation v1.2.1
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang/protobuf v1.2.0 // indirect
 	github.com/imdario/mergo v0.3.6
+	github.com/johandorland/gojsonschema v0.0.0-20181016150526-f3a9dae5b194 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.1.0
 	github.com/onsi/ginkgo v1.5.0

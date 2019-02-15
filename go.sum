@@ -1,9 +1,13 @@
+github.com/awslabs/goformation v1.2.1 h1:rJL88JtmINHnvWhMRSOXm6MebzaStKinOdLAX9Plek8=
+github.com/awslabs/goformation v1.2.1/go.mod h1:caLRalqRpGGTI7ZGd6Um+OmF8i45WaFJcVUSW4vaQ9w=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/golang/protobuf v1.2.0 h1:P3YflyNX/ehuJFLhxviNdFxQPkGK5cDcApsge1SqnvM=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/imdario/mergo v0.3.6 h1:xTNEAn+kxVO7dTZGu0CegyqKZmoWFI0rF8UxjlB2d28=
 github.com/imdario/mergo v0.3.6/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
+github.com/johandorland/gojsonschema v0.0.0-20181016150526-f3a9dae5b194 h1:xKBNyPlg6QmblrmPE8JwlBUUShA/4v8Cg4ohzeRZbJY=
+github.com/johandorland/gojsonschema v0.0.0-20181016150526-f3a9dae5b194/go.mod h1:1mXKyf/dupYvz1W9cGLRYOZZnUQA0ojA/LWa4/tldo8=
 github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
