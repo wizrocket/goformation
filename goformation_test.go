@@ -5,9 +5,9 @@ import (
 
 	"github.com/sanathkr/yaml"
 
-	"github.com/awslabs/goformation"
-	"github.com/awslabs/goformation/cloudformation"
-	"github.com/awslabs/goformation/intrinsics"
+	"github.com/wizrocket/goformation"
+	"github.com/wizrocket/goformation/cloudformation"
+	"github.com/wizrocket/goformation/intrinsics"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
