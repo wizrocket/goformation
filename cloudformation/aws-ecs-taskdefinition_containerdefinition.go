@@ -117,12 +117,12 @@ type AWSECSTaskDefinition_ContainerDefinition struct {
 	// Privileged AWS CloudFormation Property
 	// Required: false
 	// See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-containerdefinitions.html#cfn-ecs-taskdefinition-containerdefinition-privileged
-	Privileged bool `json:"Privileged,omitempty"`
+	Privileged bool `json:"Privileged"`
 
 	// ReadonlyRootFilesystem AWS CloudFormation Property
 	// Required: false
 	// See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-containerdefinitions.html#cfn-ecs-taskdefinition-containerdefinition-readonlyrootfilesystem
-	ReadonlyRootFilesystem bool `json:"ReadonlyRootFilesystem,omitempty"`
+	ReadonlyRootFilesystem bool `json:"ReadonlyRootFilesystem"`
 
 	// RepositoryCredentials AWS CloudFormation Property
 	// Required: false
