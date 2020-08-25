@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# This script runs on a regular cron within Travis-CI.
+# This script is run on a daily basis via GitHub Actions. It is responsible for
+# automatically updating all of goformation's CloudFormation resources to match
+# what is currently supported in AWS CloudFormation.
 # 
 # It does the following:
 # 
@@ -16,7 +18,7 @@
 # It relies on the environment GITHUB_TOKEN containing a Personal Access Token for the github.com/goformation user.
 
 # Bomb out on errors
-#set -e
+set -e
 
 # The repo/branch to create the PR against
 SRC_REPO="aws-goformation/goformation"
@@ -27,21 +29,7 @@ DST_BRANCH="master"
 # Git details (for the commit)
 COMMIT_NAME="AWS GoFormation"
 COMMIT_EMAIL="goformation@amazon.com"
-COMMIT_MSG="AWS CloudFormation Update ($(date +%F))"
-
-echo "Build Type: ${TRAVIS_EVENT_TYPE}"
-
-# # Pull requests and commits to other branches shouldn't try to deploy, just build to verify
-# if [ "$TRAVIS_EVENT_TYPE" != "cron" ]; then
-#     echo "Skipping auto generation of AWS CloudFormation resources; just doing a build."
-#     exit 0
-# fi
-
-# # Pull requests and commits to other branches shouldn't try to deploy, just build to verify
-# if [ "$TRAVIS_PULL_REQUEST" != "false" -o "$TRAVIS_BRANCH" != "$SRC_BRANCH" ]; then
-#     echo "Skipping deploy; just doing a build."
-#     exit 0
-# fi
+COMMIT_MSG="feat(schema): AWS CloudFormation Update ($(date +%F))"
 
 # Configure the Git user for any commits
 git config --global user.name "${COMMIT_NAME}"
@@ -86,7 +74,7 @@ git add schema/*
 git commit -m "${COMMIT_MSG}" 
 
 echo "Pushing changes..."
-git remote add origin-push https://${GITHUB_TOKEN}@github.com/${SRC_REPO}.git > /dev/null 2>&1
+git remote add origin-push https://x-access-token:${GITHUB_TOKEN}@github.com/${SRC_REPO}.git > /dev/null 2>&1
 git push --quiet --set-upstream origin-push ${REQUEST_BRANCH}
 
 echo "Installing GitHub Hub"
@@ -97,4 +85,4 @@ go get ./...
 
 echo "Generating Pull Request for merging ${REPO}/${REQUEST_BRANCH} to ${REPO}/${DST_BRANCH}..."
 cd ${UPSTREAM_DIR}
-echo "${COMMIT_MSG}" | /tmp/hub/bin/hub pull-request -F - /dev/null 2>&1 || true
+echo "${COMMIT_MSG}" | /tmp/hub/bin/hub pull-request -F --head aws-goformation:${REQUEST_BRANCH} - /dev/null 2>&1 || true

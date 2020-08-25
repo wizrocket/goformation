@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 
-	. "github.com/awslabs/goformation/intrinsics"
+	. "github.com/awslabs/goformation/v4/intrinsics"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -36,6 +36,53 @@ var _ = Describe("AWS CloudFormation intrinsic function processing", func() {
 			Expect(properties["Timeout"]).To(Equal(float64(120)))
 			Expect(properties["Runtime"]).To(Equal("nodejs6.10"))
 		})
+	})
+
+	Context("with a processor options that has ProcessOnlyGlobals set", func() {
+
+		input := `{"Globals": {"Function": {"Timeout": 120}},"Resources": {"MyServerlessFunction": {"Type": "AWS::Serverless::Function","Properties": {"Runtime": "nodejs6.10", "Role": { "Fn::GetAtt": ["FunctionNameRole", "Arn"]}}}},"Outputs": {"FnName": { "Condition": "foobar", "Value": 42}}}`
+		processed, err := ProcessJSON([]byte(input), &ProcessorOptions{ProcessOnlyGlobals: true})
+		It("should successfully process the template", func() {
+			Expect(processed).ShouldNot(BeNil())
+			Expect(err).Should(BeNil())
+		})
+
+		var result interface{}
+		err = json.Unmarshal(processed, &result)
+		It("should be valid JSON, and marshal to a Go type", func() {
+			Expect(processed).ToNot(BeNil())
+			Expect(err).To(BeNil())
+		})
+
+		template := result.(map[string]interface{})
+		resources := template["Resources"].(map[string]interface{})
+		outputs := template["Outputs"].(map[string]interface{})
+
+		resolvedResources := `{
+            "MyServerlessFunction": {
+              "Properties": {
+                "Runtime": "nodejs6.10",
+				"Timeout": 120,
+				"Role": {
+                	"Fn::GetAtt": [ "FunctionNameRole", "Arn" ]
+              	}
+              },
+              "Type": "AWS::Serverless::Function"
+            }
+        }`
+		resolvedOutputs := `{
+			"FnName": {
+				"Condition": "foobar",
+				"Value": 42
+			}
+		}`
+		It("should interpolate only globals", func() {
+			Expect(json.Marshal(resources)).To(MatchJSON(resolvedResources))
+		})
+		It("but should not expand Conditions", func() {
+			Expect(json.Marshal(outputs)).To(MatchJSON(resolvedOutputs))
+		})
+
 	})
 
 	// Context("with a template that contains array globals", func() {
@@ -166,10 +213,10 @@ var _ = Describe("AWS CloudFormation intrinsic function processing", func() {
 				"ExampleResource": {
 					"Type": "AWS::Example::Resource",
 					"Properties": {
-						"AZEmpty": { "Fn::GetAZs": "" },				
-						"AZDefault": { "Fn::GetAZs": { "Ref": "AWS::Region" } },				
-						"AZParam": { "Fn::GetAZs": "eu-west-1" },				
-						"FirstAZ": { 
+						"AZEmpty": { "Fn::GetAZs": "" },
+						"AZDefault": { "Fn::GetAZs": { "Ref": "AWS::Region" } },
+						"AZParam": { "Fn::GetAZs": "eu-west-1" },
+						"FirstAZ": {
 							"Fn::Select" : [ "0", { "Fn::GetAZs" : "eu-central-1" } ]
 						}
 					}
@@ -315,11 +362,11 @@ var _ = Describe("AWS CloudFormation intrinsic function processing", func() {
 				"ExampleResource": {
 					"Type": "AWS::Example::Resource",
 					"Properties": {
-						"StringProperty": "Simple string example",						
+						"StringProperty": "Simple string example",
 						"BooleanProperty": true,
 						"NumberProperty": 123.45,
-						"JoinIntrinsicPropertyString": { "Fn::Join": [ "some", "name" ] },		
-						"JoinIntrinsicPropertyArray": { "Fn::Join": [ "-", [ "some", "hyphenated", "name" ] ] },		
+						"JoinIntrinsicPropertyString": { "Fn::Join": [ "some", "name" ] },
+						"JoinIntrinsicPropertyArray": { "Fn::Join": [ "-", [ "some", "hyphenated", "name" ] ] },
 						"JoinNestedIntrinsicProperty": { "Fn::Join": [ "some", { "Fn::Join": [ "joined", "value" ] } ] },
 						"SubIntrinsicProperty": { "Fn::Sub": [ "some ${replaced}", { "replaced": "value" } ] },
 						"SplitIntrinsicProperty": { "Fn::Split" : [ ",", "some,string,to,be,split" ] },
@@ -331,7 +378,7 @@ var _ = Describe("AWS CloudFormation intrinsic function processing", func() {
 						"RefNoValue": { "Ref": "AWS::NoValue" },
 						"RefAWSRegion": { "Ref": "AWS::Region" },
 						"RefAWSStackId": { "Ref": "AWS::StackId" },
-						"RefAWSStackName": { "Ref": "AWS::StackName" }	
+						"RefAWSStackName": { "Ref": "AWS::StackName" }
 					}
 				}
 			}
@@ -549,18 +596,18 @@ var _ = Describe("AWS CloudFormation intrinsic function processing", func() {
 						"ExampleResource": {
 							"Type": "AWS::Example::Resource",
 							"Properties": {
-								"EqProp": { "Fn::If": [ "Eq", "OK", "false" ] },				
-								"Bucket": { "Fn::If": [ "UseBucketCondition", "Bucket", "NotBucket" ] },				
+								"EqProp": { "Fn::If": [ "Eq", "OK", "false" ] },
+								"Bucket": { "Fn::If": [ "UseBucketCondition", "Bucket", "NotBucket" ] },
 								"NotProp": { "Fn::If": [ "NotInline", "false", "OK" ] },
-								"NonExistant": { "Fn::If": [ "NonExistant", "false", "OK" ] }	
+								"NonExistant": { "Fn::If": [ "NonExistant", "false", "OK" ] }
 							}
 						}
 					}
 				}`
 
-		Context("with no processor options", func() {
+		Context("with evaluate conditions processor option", func() {
 
-			processed, err := ProcessJSON([]byte(template), nil)
+			processed, err := ProcessJSON([]byte(template), &ProcessorOptions{EvaluateConditions: true})
 			It("should successfully process the template", func() {
 				Expect(processed).ShouldNot(BeNil())
 				Expect(err).Should(BeNil())

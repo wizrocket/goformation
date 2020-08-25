@@ -52,12 +52,13 @@
 
     {{if .Property.IsMap}}
         "type": "object",
-        {{if .Property.IsMapOfPrimitives}}
+        {{if .Property.HasJSONPrimitiveType}}
         "patternProperties": {
             "^[a-zA-Z0-9]+$": {
                 "type": "{{.Property.GetJSONPrimitiveType}}"
             }
         },
+        "additionalProperties": true
         {{else}}
         "patternProperties": {
             "^[a-zA-Z0-9]+$": {
@@ -68,13 +69,13 @@
                 {{end}}
             }
         },
-        {{end}}
         "additionalProperties": false
+        {{end}}
     {{end}}
 
     {{if .Property.IsList}}
         "type": "array",
-        {{if .Property.IsListOfPrimitives}}
+        {{if .Property.HasJSONPrimitiveType}}
         "items": {
             "type": "{{.Property.GetJSONPrimitiveType}}"
         }

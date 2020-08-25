@@ -5,7 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/awslabs/goformation/cloudformation"
+	"github.com/awslabs/goformation/v4/cloudformation"
+	"github.com/awslabs/goformation/v4/cloudformation/sns"
 )
 
 func main() {
@@ -14,12 +15,12 @@ func main() {
 	template := cloudformation.NewTemplate()
 
 	// Create an Amazon SNS topic, with a unique name based off the current timestamp
-	template.Resources["MyTopic"] = &cloudformation.AWSSNSTopic{
+	template.Resources["MyTopic"] = &sns.Topic{
 		TopicName: "my-topic-" + strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
 	// Create a subscription, connected to our topic, that forwards notifications to an email address
-	template.Resources["MyTopicSubscription"] = &cloudformation.AWSSNSSubscription{
+	template.Resources["MyTopicSubscription"] = &sns.Subscription{
 		TopicArn: cloudformation.Ref("MyTopic"),
 		Protocol: "email",
 		Endpoint: "some.email@example.com",

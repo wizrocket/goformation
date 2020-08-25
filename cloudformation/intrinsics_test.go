@@ -3,9 +3,9 @@ package cloudformation_test
 import (
 	"strings"
 
-	"github.com/awslabs/goformation"
-	"github.com/awslabs/goformation/cloudformation"
-	"github.com/awslabs/goformation/intrinsics"
+	"github.com/awslabs/goformation/v4"
+	"github.com/awslabs/goformation/v4/cloudformation"
+	"github.com/awslabs/goformation/v4/intrinsics"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -46,7 +46,7 @@ var _ = Describe("Goformation", func() {
 			},
 			{
 				Name:     "GetAtt",
-				Input:    `Description: !GetAtt [object, property]`,
+				Input:    `Description: !GetAtt object.property`,
 				Expected: `{"Description":{"Fn::GetAtt":["object","property"]}}`,
 			},
 			{
@@ -98,6 +98,13 @@ var _ = Describe("Goformation", func() {
 				Name:     "Or",
 				Input:    `Description: !Or [a, b, c]`,
 				Expected: `{"Description":{"Fn::Or":["a","b","c"]}}`,
+			},
+			{
+				Name: "JSON escaped",
+				Input: `Description: !Sub |
+  "quote"
+  newline`,
+				Expected: `{"Description":{"Fn::Sub":"\"quote\"\nnewline"}}`,
 			},
 		}
 

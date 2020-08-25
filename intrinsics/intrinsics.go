@@ -44,6 +44,8 @@ type ProcessorOptions struct {
 	IntrinsicHandlerOverrides map[string]IntrinsicHandler
 	ParameterOverrides        map[string]interface{}
 	NoProcess                 bool
+	ProcessOnlyGlobals        bool
+	EvaluateConditions        bool
 }
 
 // nonResolvingHandler is a simple example of an intrinsic function handler function
@@ -87,12 +89,19 @@ func ProcessJSON(input []byte, options *ProcessorOptions) ([]byte, error) {
 	} else {
 		applyGlobals(unmarshalled, options)
 
-		overrideParameters(unmarshalled, options)
+		if options != nil && options.ProcessOnlyGlobals {
+			processed = unmarshalled
+		} else {
 
-		evaluateConditions(unmarshalled, options)
+			overrideParameters(unmarshalled, options)
 
-		// Process all of the intrinsic functions
-		processed = search(unmarshalled, unmarshalled, options)
+			if options != nil && options.EvaluateConditions {
+				evaluateConditions(unmarshalled, options)
+			}
+
+			// Process all of the intrinsic functions
+			processed = search(unmarshalled, unmarshalled, options)
+		}
 	}
 
 	// And return the result back as a []byte of JSON
@@ -216,11 +225,13 @@ func search(input interface{}, template interface{}, options *ProcessorOptions) 
 				return h(key, search(val, template, options), template)
 			}
 
-			if key == "Condition" {
+			if key == "Condition" && (options != nil && options.EvaluateConditions) {
 				// This can lead to infinite recursion A -> B; B -> A;
 				// pass state of the conditions that we're evaluating so we can detect cycles
-				// in case of cycle, return nil
-				return condition(key, search(val, template, options), template, options)
+				// in case of cycle or not found, do nothing
+				if con := condition(key, search(val, template, options), template, options); con != nil {
+					return con
+				}
 			}
 
 			// This is not an intrinsic function, recurse through it normally

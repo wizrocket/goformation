@@ -1,18 +1,14 @@
-package cloudformation
+package {{.PackageName}}
 
 import (
+	"sort"
 	"encoding/json"
-	{{ if (.Property.Types) }}
-	"reflect"
-	{{end}}
-	{{ if (or .Property.Types .Property.ItemTypes .Property.PrimitiveItemTypes)}}
-	"github.com/mitchellh/mapstructure"
-	{{end}}
+
+	"github.com/awslabs/goformation/v4/cloudformation/utils"
 )
 
 // {{.Name}} is a helper struct that can hold either a {{.TypesJoined}} value
 type {{.Name}} struct {
-
 	{{range $type := $.Property.PrimitiveTypes}}
 	{{$type}} *{{convertToGoType $type}}{{end}}
 
@@ -27,39 +23,40 @@ type {{.Name}} struct {
 }
 
 func (r {{.Name}}) value() interface{} {
+	ret := []interface{}{}
 
 	{{range $type := $.Property.PrimitiveTypes}}
 		if r.{{$type}} != nil {
-			return r.{{$type}}
+			ret = append(ret, r.{{$type}})
 		}
 	{{end}}
 
 	{{range $type := $.Property.PrimitiveItemTypes}}
 		if r.{{$type}}Array != nil {
-			return r.{{$type}}Array
+			ret = append(ret, r.{{$type}}Array)
 		}
 	{{end}}
 
-	{{range $type := $.Property.Types}}
-    		if r.{{$type}} != nil && !reflect.DeepEqual(r.{{$type}}, &{{$.Basename}}_{{$type}}{}) {
-      			return r.{{$type}}
-    		}
-  	{{end}}
-
-	{{range $type := $.Property.Types}}
-		if r.{{$type}} != nil {
-			return r.{{$type}}
-		}
+	{{ if (.Property.Types) }}
+		{{range $type := $.Property.Types}}
+			if r.{{$type}} != nil {
+				ret = append(ret, *r.{{$type}})
+			}
+		{{end}}
 	{{end}}
 
 	{{range $type := $.Property.ItemTypes}}
 		if r.{{$type}}Array != nil {
-			return r.{{$type}}Array
+			ret = append(ret, r.{{$type}}Array)
 		}
 	{{end}}
 
-	return nil
+	sort.Sort(utils.ByJSONLength(ret)) // Heuristic to select best attribute
+	if len(ret) > 0 {
+		return ret[0]
+	}
 
+	return nil
 }
 
 func (r {{.Name}}) MarshalJSON() ([]byte, error) {
@@ -88,16 +85,17 @@ func (r *{{.Name}}) UnmarshalJSON(b []byte) error {
 		{{end}}
 
 		case map[string]interface{}:
+			val = val // This ensures val is used to stop an error
 		{{range $type := $.Property.Types}}
-			mapstructure.Decode(val, &r.{{$type}})
+			json.Unmarshal(b, &r.{{$type}})
 		{{end}}
 
 		case []interface{}:
 		{{range $type := $.Property.PrimitiveItemTypes}}
-			mapstructure.Decode(val, &r.{{$type}}Array)
+			json.Unmarshal(b, &r.{{$type}}Array)
 		{{end}}
 		{{range $type := $.Property.ItemTypes}}
-			mapstructure.Decode(val, &r.{{$type}}Array)
+			json.Unmarshal(b, &r.{{$type}}Array)
 		{{end}}
 
 	}

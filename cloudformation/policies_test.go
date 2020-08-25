@@ -3,7 +3,9 @@ package cloudformation_test
 import (
 	"github.com/sanathkr/yaml"
 
-	"github.com/awslabs/goformation/cloudformation"
+	"github.com/awslabs/goformation/v4/cloudformation"
+	"github.com/awslabs/goformation/v4/cloudformation/autoscaling"
+	"github.com/awslabs/goformation/v4/cloudformation/policies"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -15,13 +17,13 @@ var _ = Describe("Goformation", func() {
 
 		tests := []struct {
 			Name     string
-			Input    *cloudformation.UpdatePolicy
+			Input    *policies.UpdatePolicy
 			Expected interface{}
 		}{
 			{
 				Name: "AutoScalingReplacingUpdate",
-				Input: &cloudformation.UpdatePolicy{
-					AutoScalingReplacingUpdate: &cloudformation.AutoScalingReplacingUpdate{
+				Input: &policies.UpdatePolicy{
+					AutoScalingReplacingUpdate: &policies.AutoScalingReplacingUpdate{
 						WillReplace: true,
 					},
 				},
@@ -33,8 +35,8 @@ var _ = Describe("Goformation", func() {
 			},
 			{
 				Name: "AutoScalingReplacingUpdate",
-				Input: &cloudformation.UpdatePolicy{
-					AutoScalingRollingUpdate: &cloudformation.AutoScalingRollingUpdate{
+				Input: &policies.UpdatePolicy{
+					AutoScalingRollingUpdate: &policies.AutoScalingRollingUpdate{
 						MaxBatchSize:                  10,
 						MinInstancesInService:         11,
 						MinSuccessfulInstancesPercent: 12,
@@ -56,8 +58,8 @@ var _ = Describe("Goformation", func() {
 			},
 			{
 				Name: "AutoScalingScheduledAction",
-				Input: &cloudformation.UpdatePolicy{
-					AutoScalingScheduledAction: &cloudformation.AutoScalingScheduledAction{
+				Input: &policies.UpdatePolicy{
+					AutoScalingScheduledAction: &policies.AutoScalingScheduledAction{
 						IgnoreUnmodifiedGroupSizeProperties: true,
 					},
 				},
@@ -69,8 +71,8 @@ var _ = Describe("Goformation", func() {
 			},
 			{
 				Name: "CodeDeployLambdaAliasUpdate",
-				Input: &cloudformation.UpdatePolicy{
-					CodeDeployLambdaAliasUpdate: &cloudformation.CodeDeployLambdaAliasUpdate{
+				Input: &policies.UpdatePolicy{
+					CodeDeployLambdaAliasUpdate: &policies.CodeDeployLambdaAliasUpdate{
 						ApplicationName:        "test-application-name",
 						DeploymentGroupName:    "test-deployment-group-name",
 						AfterAllowTrafficHook:  "test-after-allow-traffic-hook",
@@ -93,11 +95,11 @@ var _ = Describe("Goformation", func() {
 
 			It("should have the correct values for "+test.Name, func() {
 
-				asg := cloudformation.AWSAutoScalingAutoScalingGroup{}
-				asg.SetUpdatePolicy(test.Input)
+				asg := autoscaling.AutoScalingGroup{}
+				asg.AWSCloudFormationUpdatePolicy = test.Input
 
 				template := &cloudformation.Template{
-					Resources: map[string]interface{}{"AutoScalingGroup": asg},
+					Resources: cloudformation.Resources{"AutoScalingGroup": &asg},
 				}
 
 				data, err := template.JSON()
@@ -128,16 +130,16 @@ var _ = Describe("Goformation", func() {
 
 		tests := []struct {
 			Name     string
-			Input    *cloudformation.CreationPolicy
+			Input    *policies.CreationPolicy
 			Expected interface{}
 		}{
 			{
 				Name: "CreationPolicy",
-				Input: &cloudformation.CreationPolicy{
-					AutoScalingCreationPolicy: &cloudformation.AutoScalingCreationPolicy{
+				Input: &policies.CreationPolicy{
+					AutoScalingCreationPolicy: &policies.AutoScalingCreationPolicy{
 						MinSuccessfulInstancesPercent: 10,
 					},
-					ResourceSignal: &cloudformation.ResourceSignal{
+					ResourceSignal: &policies.ResourceSignal{
 						Count:   11,
 						Timeout: "test-timeout",
 					},
@@ -159,11 +161,11 @@ var _ = Describe("Goformation", func() {
 
 			It("should have the correct values for "+test.Name, func() {
 
-				asg := cloudformation.AWSAutoScalingAutoScalingGroup{}
-				asg.SetCreationPolicy(test.Input)
+				asg := autoscaling.AutoScalingGroup{}
+				asg.AWSCloudFormationCreationPolicy = test.Input
 
 				template := &cloudformation.Template{
-					Resources: map[string]interface{}{"AutoScalingGroup": asg},
+					Resources: cloudformation.Resources{"AutoScalingGroup": &asg},
 				}
 
 				data, err := template.JSON()
@@ -194,7 +196,7 @@ var _ = Describe("Goformation", func() {
 
 		tests := []struct {
 			Name     string
-			Input    cloudformation.DeletionPolicy
+			Input    policies.DeletionPolicy
 			Expected interface{}
 		}{
 			{
@@ -219,11 +221,11 @@ var _ = Describe("Goformation", func() {
 
 			It("should have the correct values for "+test.Name, func() {
 
-				asg := cloudformation.AWSAutoScalingAutoScalingGroup{}
-				asg.SetDeletionPolicy(test.Input)
+				asg := autoscaling.AutoScalingGroup{}
+				asg.AWSCloudFormationDeletionPolicy = test.Input
 
 				template := &cloudformation.Template{
-					Resources: map[string]interface{}{"AutoScalingGroup": asg},
+					Resources: cloudformation.Resources{"AutoScalingGroup": &asg},
 				}
 
 				data, err := template.JSON()
