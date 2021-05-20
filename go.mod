@@ -1,4 +1,4 @@
-module github.com/wizrocket/goformation
+module github.com/sequeiradenzil/goformation
 
 require (
 	github.com/awslabs/goformation v1.2.1
@@ -14,6 +14,7 @@ require (
 	github.com/sanathkr/go-yaml v0.0.0-20170819195128-ed9d249f429b
 	github.com/sanathkr/yaml v0.0.0-20170819201035-0056894fa522
 	github.com/stretchr/testify v1.2.2 // indirect
+	github.com/wizrocket/goformation v1.3.2
 	github.com/xeipuuv/gojsonpointer v0.0.0-20170225233418-6fe8760cad35 // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20150808065054-e02fc20de94c // indirect
 	github.com/xeipuuv/gojsonschema v0.0.0-20181112162635-ac52e6811b56
