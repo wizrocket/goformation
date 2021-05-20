@@ -1,4 +1,4 @@
-module github.com/sequeiradenzil/goformation
+module github.com/wizrocket/goformation
 
 require (
 	github.com/awslabs/goformation v1.2.1
