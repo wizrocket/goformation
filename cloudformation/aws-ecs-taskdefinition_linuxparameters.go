@@ -19,10 +19,20 @@ type AWSECSTaskDefinition_LinuxParameters struct {
 	// See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-linuxparameters.html#cfn-ecs-taskdefinition-linuxparameters-initprocessenabled
 	InitProcessEnabled bool `json:"InitProcessEnabled,omitempty"`
 
+	// MaxSwap AWS CloudFormation Property
+	// Required: false
+	// See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-linuxparameters.html#cfn-ecs-taskdefinition-linuxparameters-maxswap
+	MaxSwap int `json:"MaxSwap,omitempty"`
+
 	// SharedMemorySize AWS CloudFormation Property
 	// Required: false
 	// See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-linuxparameters.html#cfn-ecs-taskdefinition-linuxparameters-sharedmemorysize
 	SharedMemorySize int `json:"SharedMemorySize,omitempty"`
+
+	// Swappiness AWS CloudFormation Property
+	// Required: false
+	// See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-linuxparameters.html#cfn-ecs-taskdefinition-linuxparameters-swappiness
+	Swappiness int `json:"Swappiness,omitempty"`
 
 	// Tmpfs AWS CloudFormation Property
 	// Required: false
